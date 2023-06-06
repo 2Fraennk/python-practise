@@ -9,7 +9,7 @@ print(name[0])
 print("last character: " + name[-1])
 
 # print middle character
-print("middle character: " + name[int(len(name)/2)])
+print("middle character: " + name[int(len(name) / 2)])
 
 # print every even character
 print("every even character: " + name[1::2])
