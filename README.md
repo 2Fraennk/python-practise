@@ -6,6 +6,8 @@ This is a practise repo in order get prepared for the 'Certified Entry-Level Pyt
   * looping
   * conditionals
   * data types / structures / handling
+  * variables scopes
+  * generators
   
 * some **labs** to use the basics
 
