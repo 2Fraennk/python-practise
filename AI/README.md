@@ -1,0 +1,5 @@
+
+# dependencies
+- pip install openai
+---
+
