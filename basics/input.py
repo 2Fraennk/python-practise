@@ -5,7 +5,7 @@
 
 # convert into boolean / 0=false ; >=1 = true
 result1 = input("Favorite Colour: ")
-print(result1) # this is a trailing comment
+print(result1)  # this is a trailing comment
 
 age = int(input("what is it? "))
 
