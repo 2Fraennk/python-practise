@@ -1,0 +1,83 @@
+@startuml
+
+!pragma teoz true
+
+skinparam sequenceMessageAlign center
+
+box main #Pink
+    participant "main" as main
+    participant "playwright" as playwright
+end box
+
+box login #LightCyan
+    participant "AMQ_Webconsole" as amq_webconsole
+end box
+
+box queues #LightGrey
+    participant "go_to_dead_message" as go_to_dead_message
+    participant "go_to_dlq" as go_to_dlq
+    participant "find_dlqs" as find_dlqs
+    participant "go_to_queues" as go_to_queues
+end box
+
+box dlqs #LightYellow
+    participant "get_messages_retry_list" as retry_list
+    participant "analyze_retry_opportunity" as analyze_retry_opportunity
+    participant "remove_dlq" as remove_dlq
+end box
+
+box logfile #LightPink
+    participant "set_ticket_interval" as set_interval
+    participant "analyze_logfile" as analyze_logfile
+end box
+
+box my_jira #LightBlue
+    participant "init_jira_connection" as init_jira_connection
+    participant "get_ticket" as get_ticket
+    participant "add_comments" as add_comment
+    participant "get_ticket_status" as get_ticket_status
+    participant "set_ticket_status" as set_ticket_status
+end box
+
+main -> playwright: init client
+activate main
+    activate playwright
+    playwright -> amq_webconsole: login client
+    activate "amq_webconsole"
+    main -> find_dlqs: find dlqs and \nreturn a list
+
+    alt dlq existing FALSE
+        find_dlqs -> main: stop program
+        deactivate playwright
+        else dlq existing TRUE
+        find_dlqs -> main: handle DLQs
+        activate playwright
+    end alt
+
+    main -> go_to_dlq: go to dlq
+    main -> retry_list: get list of messages to retry
+    retry_list -> analyze_retry_opportunity: analyze message and \n create retry-list
+    main -> go_to_dlq: go to dlq
+
+    alt "dlq is empty" TRUE
+        main -> go_to_queues: go to empty dlq
+        main -> remove_dlq: remove empty dlq
+        else "dlq is empty" FALSE
+        playwright -> amq_webconsole: execute message retry
+    end alt
+
+    main -> playwright: close context + browser
+    deactivate playwright
+
+    main -> set_interval
+    main -> analyze_logfile
+    activate init_jira_connection
+        main -> init_jira_connection
+        main -> get_ticket
+        main -> get_ticket_status
+        main -> set_ticket_status
+        main -> add_comment
+
+deactivate main
+
+@enduml

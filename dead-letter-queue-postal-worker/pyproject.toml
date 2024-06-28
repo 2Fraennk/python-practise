@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "dead-letter-queue-postal-worker"
+version = "0.1.0"
+description = ""
+authors = ["FABI"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+pytest = "^7.4.4"
+playwright = "^1.40.0"
+logging = "^0.4.9.6"
+jira = "3.6.0"
+advertools = "0.14.2"
+pandas ="2.2.1"
+python-logstash-nested = "^0.5.3"
+pykeepass = "^4.0.7.post1"
+pyotp = "^2.9.0"
+
+[tool.poetry.scripts]
+activeMQ = "activeMQ:activePage"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

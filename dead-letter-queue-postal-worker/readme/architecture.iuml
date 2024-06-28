@@ -1,0 +1,43 @@
+@startuml
+
+frame "postal worker" #lightyellow{
+    package "activeMq" {
+      [main] -- "properties": read
+      [main] -> [logfile handler]: call
+      [main] --> [playwright]: call
+      [playwright]
+      [logfile handler] -- "logfile": write +\n analyze
+      [logfile handler]
+      folder "properties" {
+      }
+      folder "logfile" {
+      }
+    }
+
+    package "centraljira" {
+      [create_ticket]
+      [MyJira]
+      folder "properties" {
+      }
+      [logfile handler] -> [MyJira]: call with\n parameters
+    }
+   }
+
+node "message bus AMQ" #lightblue{
+    HTTPS_AMQ - [DLQ]
+    [playwright] ---> HTTPS_AMQ: search dlqs and\n handle messages
+}
+
+cloud "JIRA" #lightblue{
+    [MyJira] ----> HTTPS_JIRA: update dlq-ticket\n with logdata
+    [create_ticket] ----> HTTPS_JIRA: create dlq-ticket\n with data
+}
+
+package "nagstamon" #lightgreen{
+    folder "service check" {
+        [variables] -> alert
+    }
+    alert --> [create_ticket]: call py-script\n with parameters (vars)
+}
+
+@enduml

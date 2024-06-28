@@ -1,0 +1,18 @@
+version: "3.8"
+
+networks:
+  monitoring:
+
+services:
+  dead-letter-queue-postal-worker:
+    build:
+      context: .
+    image: dead-letter-queue-postal-worker
+    restart: on-failure
+    container_name: dead-letter-queue-postal-worker
+    hostname: dead-letter-queue-postal-worker
+    networks:
+      - monitoring
+    volumes:
+      - $PWD/src/properties.py:/usr/local/dead-letter-queue-postal-worker/src/properties.py:ro
+      - $PWD/logs:/usr/local/dead-letter-queue-postal-worker/logs
